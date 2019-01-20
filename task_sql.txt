@@ -1,0 +1,50 @@
+Таблицы:
+customer (клиенты)
+- id - единтификатор клиента;
+- name - имя.
+
+comment (комментарии)
+- id - идентификатор комментария;
+- customer_id - ссылка на таблицу customer;
+- text - текст комментария
+- is_black - признак "нецензурный" (1 - да, 0 - нет)
+- date - дата комментария
+
+
+
+Задания:
+1. Вывести имена клиентов напротив комментариев.
+
+Comment | UserName
+------------------
+чушь!   | Владимир
+...
+
+2. Вывести кол-во комментариев, оставленных в разрезе каждого месяца. Пример:
+Month | Count
+-------------
+	4 |    10
+	5 |    12
+...
+
+3. Вывести имена пользователей, оставивших <b>исключительно</b> нецензурные комментарии (все комментарии пользователя должны иметь признак is_black = 1). На выходе: Александр
+4. Вывести имена пользователей, оставивших максимальное кол-во комментариев. На выходе должны быть: Дмитрий, Евгений
+
+
+
+
+#1 Задание
+SELECT comment.text, customer.name FROM comment JOIN customer ON(comment.customer_id = customer.id);
+#2 Задание
+SELECT MONTH(date) as Month, COUNT(*) as Count FROM comment GROUP BY MONTH(date);
+
+#3 Задание
+SELECT `name` FROM comment JOIN customer ON(comment.customer_id = customer.id) GROUP BY name HAVING MIN(is_black) = 1;
+#4 Задание
+SELECT `name` FROM comment JOIN customer ON(comment.customer_id = customer.id) GROUP BY name HAVING count(*) = (SELECT COUNT(*) as count_comments FROM comment  GROUP BY customer_id ORDER BY count_comments DESC LIMIT 1);
+
+#Bonus
+SELECT t1.name, t2.value as `qty`, t3.value as `group`
+	from table1 t1
+left join table2 t2 ON( t1.pid=t2.pid and t2.attr='qty')
+left join table2 t3 ON( t1.pid=t3.pid and t3.attr='group');
